@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+
+<script>
+    {% block jquery %}
+        function setPrice() {
+            var price = $(".variation_select option:selected").attr("data-price");
+            var sale_price = $(".variation_select option:selected").attr("data-sale-price");
+            if (sale_price != "" && sale_price != "None" && sale_price != null) {
+                $("#price").html("<h3>" + sale_price + " <small class='og-price'>Original price: " + price + "</small></h3>");
+            } else {
+                $("#price").html(price);
+            }
+        }
+
+
+
+        setPrice();
+
+        $(".variation_select").change(function () {
+            setPrice();
+        });
+
+        $("#submit-btn").click(function (event) {
+            event.preventDefault();
+            var formData = $("#add-form").serialize();
+            console.log(formData);
+            $.ajax({
+                type: "GET", // "POST"
+                url: "{% url 'cart' %}",
+                data: formData,
+                success: function (data) {
+                    $("#jquery-message").text("Added " + data.item_added + " Deleted " + data.deleted);
+                    showFlashMessage(data.flash_message);
+                    updateCartItemCount();
+                },
+                error: function (response, error) {
+                    console.log(response);
+                    console.log(error);
+                    $("#add-form").submit();
+                },
+            });
+            // $("#add-form").submit();
+        });
+
+    {% endblock %}
+</script>
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>{{ product.title }}</h2>
+            {% if product.get_image_url %}
+                <img id='img' class="img-responsive" src='{{ product.get_image_url }}'/>
+            {% endif %}
+            <p class="lead">{{ product.description }}</p>
+        </div>
+
+
+        <!-- Product Sidebar -->
+        <div class="col-sm-4">
+            <form id="add-form" method="GET" action="{% url 'cart' %}">
+                <p id="jquery-message" class="lead"></p>
+                {% if product.variation_set.count > 1 %}
+                    <h3 id='price'>{{ product.variation_set.first.price }}</h3>
+
+                    <select name='item' class="form-control variation_select">
+                        {% for variation in product.variation_set.all %}
+                            <option data-sale-price="{{ variation.sale_price }}" data-price="{{ variation.price }}"
+                                    value="{{ variation.id }}">{{ variation }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <h3 id='price'>{% if object.variation_set.first.sale_price %}
+                        {{ product.variation_set.first.sale_price }}
+                        <small class="og-price">{{ product.variation_set.first.price }}</small>
+                    {% else %}
+                        <input class='form-control' type="hidden" name="item"
+                               value="{{ product.variation_set.first.id }}">
+                        {{ product.variation_set.first.price }}
+                    {% endif %}
+                    </h3>
+                {% endif %}
+                <input type="number" name="qty" value="1">
+                <br/>
+                <input id="submit-btn" type="submit" class="'btn btn-default" value="Add to cart">
+            </form>
+
+            <br/>
+            <hr/>
+
+            <p>Share<br/>
+                <a href="https:www.facebook.com/share/sharer.php?u={{ request.build_absolute_uri }}"><i
+                        class="fa fa-facebook-square fa-3x"></i></a>
+                <a href="#"><i class="fa fa-twitter-square fa-3x"></i></a>
+            </p>
+
+            <h4>Related Products</h4>
+            <div class="row">
+                {% for product in related %}
+                    <div class="col-xs-6">
+                        {% include "products/product_thumbnail.html" with product=product price="True" %}
+                    </div>
+                    {% cycle '' '</div><div class="row">' %}
+                {% endfor %}
+            </div>
+
+
+            <!-- End Product Sidebar -->
+        </div>
+    </div>
+{% endblock %}

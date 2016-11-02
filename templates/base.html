@@ -11,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>{% block head_title %}MVP Landing{% endblock %}</title>
+    <title>{% block head_title %}eCommerce 2{% endblock %}</title>
 
     {% include 'head_css.html' %}
 
@@ -25,6 +25,19 @@
 
   <body>
   {% include 'navbar.html' %}
+
+  {% if messages %}
+  <div class="container">
+      <div class="alert alert-success text-center">
+          {% for message in messages %}
+          <p {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</p></br>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+          {% endfor %}
+      </div>
+  </div>
+  {% endif %}
 
 {% block jumbotron %}
           
@@ -41,6 +54,12 @@
     </div> <!-- /container -->
 
     {% include "javascript.html" %}
+
+  <script>
+      $(document).ready(function(){
+          {% block jquery %}{% endblock %}
+      });
+  </script>
     
     
   </body>

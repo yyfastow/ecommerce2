@@ -58,7 +58,10 @@ INSTALLED_APPS = (
     'registration',
 
     #my apps
+    'carts',
     'newsletter',
+    'orders',
+    'products',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -109,7 +112,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 
@@ -145,6 +148,14 @@ ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+
+# Braaintree  Payment Details
+
+BRAINTREE_PUBLIC = "fbx7sjyyfn4yw9jx"
+BRAINTREE_PRIVATE = "38fbb469a34eb2c950393610c7031227"
+BRAINTREE_MERCHANT_ID = "vqfcj3nrdrw64s8t"
+BRAINTREE_ENVIROMENT = "Sandbox"
 
 
 

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table class="table">
+    {% for item in variation_list %}
+        <tr>
+            <td><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></td>
+            <td>{{ item.inventory }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <form method="POST" action="">
+        {{ formset.management_form }}
+        {% csrf_token %}
+        {% for form in formset %}
+            {{ form.instance.product.title }}
+            {{ form.instance.title }}
+            {{ form.as_p }}
+        {% endfor %}
+    <input type="submit" value="Update" class="btn" />
+    </form>
+{% endblock %}
